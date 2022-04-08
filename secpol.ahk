@@ -1,11 +1,43 @@
+; Secpol Exporter
+VERSION="0.1"
+
+; TO DO 
+;
+; need to test more of differnt windows versions - win 2012,2019,2022,11
+; check the files exist and of site at the end 
+; make sure times are adjusted for slower systems
+; check the exe dont flag antivirus -singed
 
 outdir=%A_Desktop%\%A_ComputerName%_collect\secpol\
+
+
 
 IfNotExist, %outdir%
     FileCreateDir, %outdir%
 
 ; opens secpol.msc takes screenshots and exports sections out 
 ; on windows 7 the scrolling doesnt seem to work 
+
+
+; Admin check - will relaunch as admin if not 
+CommandLine := DllCall("GetCommandLine", "Str")
+
+If !(A_IsAdmin || RegExMatch(CommandLine, " /restart(?!\S)")) {
+    Try {
+        If (A_IsCompiled) {
+            Run *RunAs "%A_ScriptFullPath%" /restart
+        } Else {
+            Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+        }
+    }
+    ExitApp
+}
+
+WinMinimizeAll
+
+
+
+
 
 
 sleep 200
